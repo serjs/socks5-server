@@ -22,7 +22,8 @@ jobs:
       - deploy:
           command: |
             docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASSWORD
-            if [ $CIRCLE_TAG -ne "undefined" ]; then
+            if [ $CIRCLE_TAG -ne "undefined" ];
+            then
               docker tag serjs/go-socks5-proxy serjs/go-socks5-proxy:$CIRCLE_TAG
               docker push serjs/go-socks5-proxy:$CIRCLE_TAG
             else

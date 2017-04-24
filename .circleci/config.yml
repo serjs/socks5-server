@@ -3,8 +3,9 @@ jobs:
   build:
     docker:
       - image: docker
-    working_directory: ~/socks5-server
+    working_directory: /home/socks5-server/
     steps:
+      - checkout
       - setup_remote_docker
       - run:
           name: Install Docker client

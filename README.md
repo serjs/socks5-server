@@ -1,16 +1,11 @@
 # go-socks5-proxy
-[![CircleCI](https://circleci.com/gh/serjs/socks5-server.svg?style=shield)](https://circleci.com/gh/serjs/socks5-server)
 
-Simple socks5 server using go-socks5 with auth
+Simple socks5 server using go-socks5 with or without auth.
 
 # Start container with proxy
-```docker run -d --name socks5-proxy -p 1080:1080 -e PROXY_USER=<PROXY_USER> -e PROXY_PASSWORD=<PROXY_PASSWORD> serjs/go-socks5-proxy```
+```docker run -d --name socks5 -p 1080:1080 -e PROXY_USER=<PROXY_USER> -e PROXY_PASSWORD=<PROXY_PASSWORD>  olebedev/socks5```
 
-where
-
-```<PROXY_USER>``` - username to authenticate
-
-```<PROXY_PASSWORD>``` - password to authenticate
+For auth-less mode do pass `PROXY_USER` and `PROXY_PASSWORD`.
 
 # Test running service
-```curl --socks5 <docker machine ip>:1080 -U <PROXY_USER>:<PROXY_PASSWORD> https://ifcfg.me``` - result must show docker host ip (for bridged network)
+```curl --socks5 <docker machine ip>:1080  https://ya.ru``` - result must show docker host ip (for bridged network)

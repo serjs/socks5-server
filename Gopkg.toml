@@ -24,3 +24,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/armon/go-socks5"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/caarlos0/env"

@@ -24,7 +24,7 @@ Without auth
 
 With auth
 
-```curl --socks5 --user <PROXY_USER:<PROXY_PASSWORD> <docker host ip>:1080  http://ifcfg.co``` - result must show docker host ip (for bridged network)
+```curl --proxy-user <PROXY_USER>:<PROXY_PASSWORD> --socks5 <docker host ip>:1080  http://ifcfg.co``` - result must show docker host ip (for bridged network)
 
 ## Authors
 

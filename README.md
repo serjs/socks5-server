@@ -1,12 +1,12 @@
 # go-socks5-proxy
 
-Simple socks5 server using go-socks5 with or without auth
+Simple socks5 server using go-socks5 with authentication options
 
 ## Start container with proxy
 
 ```docker run -d --name socks5 -p 1080:1080 -e PROXY_USER=<PROXY_USER> -e PROXY_PASSWORD=<PROXY_PASSWORD>  serjs/go-socks5-proxy```
 
-For auth-less mode just do not pass envrionment variables `PROXY_USER` and `PROXY_PASSWORD`.
+Leave `PROXY_USER` and `PROXY_PASSWORD` empty for skip authentication options while running socks5 server.
 
 ## List of all supported config parameters
 
@@ -14,17 +14,25 @@ For auth-less mode just do not pass envrionment variables `PROXY_USER` and `PROX
 |------------|----|-------|-----------|
 |PROXY_USER|String|EMPTY|Set proxy user (also required existed PROXY_PASS)|
 |PROXY_PASSWORD|String|EMPTY|Set proxy password for auth, used with PROXY_USER|
-|PROXY_PORT|String|1080|Set listen port for application|
+|PROXY_PORT|String|1080|Set listen port for application inside docker container|
 
 ## Test running service
 
-Without auth
+Without authentication
 
 ```curl --socks5 <docker host ip>:1080  http://ifcfg.co``` - result must show docker host ip (for bridged network)
 
-With auth
+or
 
-```curl --socks5 --user <PROXY_USER>:<PROXY_PASSWORD> <docker host ip>:1080  http://ifcfg.co``` - result must show docker host ip (for bridged network)
+```docker run --rm curlimages/curl:7.65.3 -s --socks5 <docker host ip>:1080```
+
+With authentication - result must show docker host ip (for bridged network)
+
+```curl --socks5 --user <PROXY_USER>:<PROXY_PASSWORD> <docker host ip>:1080  http://ifcfg.co```
+
+or
+
+```docker run --rm curlimages/curl:7.65.3 -s --socks5 <PROXY_USER>:<PROXY_PASSWORD>@<docker host ip>:1080```
 
 ## Authors
 

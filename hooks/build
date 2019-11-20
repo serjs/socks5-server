@@ -2,6 +2,5 @@
 
 for i in arm32v6 arm32v6 arm64v8 amd64;
   do
-    docker build --build-arg ARCH=$i -t serjs/test:$i .
-    # $IMAGE_NAME .
+    docker build --build-arg ARCH=$i -t serjs/$DOCKER_REPO:$DOCKER_TAG-$i .
   done

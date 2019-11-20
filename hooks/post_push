@@ -1,3 +1,5 @@
+#!/bin/sh
+
 echo "--post_push hook called--"
 echo "post_push: IMAGE_NAME '$IMAGE_NAME'"
 echo "post_push: DOCKERFILE_PATH '$DOCKERFILE_PATH'"

@@ -28,7 +28,7 @@ or
 
 With authentication - result must show docker host ip (for bridged network)
 
-```curl --socks5 --user <PROXY_USER>:<PROXY_PASSWORD> <docker host ip>:1080  http://ifcfg.co```
+```curl --socks5 <docker host ip>:1080 -U <PROXY_USER>:<PROXY_PASSWORD> http://ifcfg.co```
 
 or
 

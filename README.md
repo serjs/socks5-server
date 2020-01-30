@@ -24,7 +24,7 @@ Without authentication
 
 or
 
-```docker run --rm curlimages/curl:7.65.3 -s --socks5 <docker host ip>:1080```
+```docker run --rm curlimages/curl:7.65.3 -s --socks5 <docker host ip>:1080 http://ifcfg.co```
 
 With authentication - result must show docker host ip (for bridged network)
 
@@ -32,7 +32,7 @@ With authentication - result must show docker host ip (for bridged network)
 
 or
 
-```docker run --rm curlimages/curl:7.65.3 -s --socks5 <PROXY_USER>:<PROXY_PASSWORD>@<docker host ip>:1080```
+```docker run --rm curlimages/curl:7.65.3 -s --socks5 <PROXY_USER>:<PROXY_PASSWORD>@<docker host ip>:1080 http://ifcfg.co```
 
 ## Authors
 

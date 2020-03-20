@@ -1,11 +1,14 @@
-name: buildx
+name: "Master release"
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+  DOCKERHUB_REPOSITORY: serjs/go-socks5-proxy
 
 on:
   pull_request:
     branches: master
   push:
     branches: master
-    tags:
 
 jobs:
   buildx:
@@ -30,4 +33,5 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
             --output "type=image,push=false" \
+            --push
             .

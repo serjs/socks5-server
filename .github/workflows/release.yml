@@ -1,26 +1,11 @@
-name: "Master release"
+name: "Release tag"
 env:
   DOCKERHUB_REPOSITORY: serjs/go-socks5-proxy
 
-on: pull_request
-name: hadolint action
-jobs:
-  hadolintOnPr:
-    name: hadolint on pr
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - name: hadolint on pr
-      uses: burdzwastaken/hadolint-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        HADOLINT_ACTION_DOCKERFILE_FOLDER: .
-
 on:
-  pull_request:
-    branches: master
-  push:
-    branches: master
+  release:
+    # Only use the types keyword to narrow down the activity types that will trigger your workflow.
+    types: [published, created, edited]
 
 jobs:
   buildx:
@@ -33,9 +18,12 @@ jobs:
         name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1.1.0
-      -
-        name: Print builder available platforms
-        run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Release version
+        run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF:10}
+      - name: Print release version
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ env.RELEASE_VERSION }}
       - name: Dockerhub login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
       -
@@ -45,5 +33,5 @@ jobs:
             --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
             --output "type=image,push=false" \
             --push \
-            --tag "$DOCKERHUB_REPOSITORY:latest" \
+            --tag "$DOCKERHUB_REPOSITORY:$RELEASE_VERSION" \
             .

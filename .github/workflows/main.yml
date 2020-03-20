@@ -15,6 +15,9 @@ jobs:
         name: Checkout
         uses: actions/checkout@v1
       -
+        name: Thisdir
+        run: ls -la
+      -
         name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1.1.0

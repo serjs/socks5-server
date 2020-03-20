@@ -22,12 +22,8 @@ jobs:
       -
         name: Print builder available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
-      -
-        name: Dockerhub login
-        uses: azure/docker-login@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Dockerhub login
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
       -
         name: Run Buildx
         run: |
@@ -35,5 +31,5 @@ jobs:
             --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
             --output "type=image,push=false" \
             --push \
-            --tag "serjs/latest" \
+            --tag "${{ DOCKERHUB_REPOSITORY }}:latest" \
             .

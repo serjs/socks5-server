@@ -1,7 +1,5 @@
 name: "Master release"
 env:
-  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
   DOCKERHUB_REPOSITORY: serjs/go-socks5-proxy
 
 on:
@@ -18,9 +16,6 @@ jobs:
         name: Checkout
         uses: actions/checkout@v1
       -
-        name: Thisdir
-        run: ls -la
-      -
         name: Set up Docker Buildx
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1.1.0
@@ -28,11 +23,17 @@ jobs:
         name: Print builder available platforms
         run: echo ${{ steps.buildx.outputs.platforms }}
       -
+        name: Dockerhub login
+        uses: azure/docker-login@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      -
         name: Run Buildx
         run: |
           docker buildx build \
             --platform linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64 \
             --output "type=image,push=false" \
             --push \
-            --tag latest \
+            --tag $DOCKERHUB_REPOSITORY/latest \
             .

@@ -1,6 +1,6 @@
 ARG GOLANG_VERSION="1.12"
 
-FROM --platform=$BUILDPLATFORM golang:$GOLANG_VERSION-alpine as builder
+FROM golang:$GOLANG_VERSION-alpine as builder
 WORKDIR /go/src/github.com/olebedev/socks5
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-s' -o ./socks5

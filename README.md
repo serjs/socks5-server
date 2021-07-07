@@ -18,6 +18,7 @@ Leave `PROXY_USER` and `PROXY_PASSWORD` empty for skip authentication options wh
 |PROXY_USER|String|EMPTY|Set proxy user (also required existed PROXY_PASS)|
 |PROXY_PASSWORD|String|EMPTY|Set proxy password for auth, used with PROXY_USER|
 |PROXY_PORT|String|1080|Set listen port for application inside docker container|
+|TZ|String|UTC|Set Timezone like in many common Operation Systems|
 
 ## Test running service
 

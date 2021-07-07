@@ -16,8 +16,8 @@ jobs:
     - uses: actions/checkout@master
     - name: hadolint
       uses: hadolint/hadolint-action@v1.5.0
-        with:
-          ignore: DL3018
+      with:
+        ignore: DL3018
   buildx:
     runs-on: ubuntu-latest
     steps:

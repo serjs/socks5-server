@@ -19,11 +19,9 @@ jobs:
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1.1.0
       - name: Release version
-        run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF:10}
+        run: echo "RELEASE_VERSION=${GITHUB_REF:10}" >> $GITHUB_ENV
       - name: Print release version
-        run: |
-          echo $RELEASE_VERSION
-          echo ${{ env.RELEASE_VERSION }}
+        run: echo ${{ env.RELEASE_VERSION }}
       - name: Dockerhub login
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
       -

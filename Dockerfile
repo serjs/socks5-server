@@ -1,4 +1,4 @@
-ARG GOLANG_VERSION="1.12"
+ARG GOLANG_VERSION="1.16.5"
 
 FROM golang:$GOLANG_VERSION-alpine as builder
 RUN apk --no-cache add tzdata

@@ -15,10 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: hadolint
-      uses: burdzwastaken/hadolint-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        HADOLINT_ACTION_DOCKERFILE_FOLDER: .
+      uses: hadolint/hadolint-action@v1.5.0
   buildx:
     runs-on: ubuntu-latest
     steps:

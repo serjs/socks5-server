@@ -7,7 +7,13 @@ Simple socks5 server using go-socks5 with authentication options
 
 ## Start container with proxy
 
-```docker run -d --name socks5 -p 1080:1080 -e PROXY_USER=<PROXY_USER> -e PROXY_PASSWORD=<PROXY_PASSWORD>  serjs/go-socks5-proxy```
+```
+docker run -d --name socks5 -p 1080:1080 \
+    -e PROXY_USER=<PROXY_USER> \
+    -e PROXY_PASSWORD=<PROXY_PASSWORD> \
+    -e ALLOWED_DEST_FQDN=<REGEX_PATTERN> \
+    serjs/go-socks5-proxy
+```
 
 Leave `PROXY_USER` and `PROXY_PASSWORD` empty for skip authentication options while running socks5 server.
 
@@ -18,6 +24,7 @@ Leave `PROXY_USER` and `PROXY_PASSWORD` empty for skip authentication options wh
 |PROXY_USER|String|EMPTY|Set proxy user (also required existed PROXY_PASS)|
 |PROXY_PASSWORD|String|EMPTY|Set proxy password for auth, used with PROXY_USER|
 |PROXY_PORT|String|1080|Set listen port for application inside docker container|
+|ALLOWED_DEST_FQDN|String|EMPTY|Allowed destination address regular expression pattern. Default allows all.|
 |TZ|String|UTC|Set Timezone like in many common Operation Systems|
 
 ## Test running service

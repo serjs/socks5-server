@@ -1,6 +1,8 @@
 package socks5
 
 import (
+	"regexp"
+
 	"golang.org/x/net/context"
 )
 
@@ -17,6 +19,11 @@ func PermitAll() RuleSet {
 // PermitNone returns a RuleSet which disallows all types of connections
 func PermitNone() RuleSet {
 	return &PermitCommand{false, false, false}
+}
+
+// PermitDestAddrPattern returns a RuleSet which selectively allows addresses
+func PermitDestAddrPattern(pattern string) RuleSet {
+	return &PermitDestAddrPatternRuleSet{pattern}
 }
 
 // PermitCommand is an implementation of the RuleSet which
@@ -38,4 +45,15 @@ func (p *PermitCommand) Allow(ctx context.Context, req *Request) (context.Contex
 	}
 
 	return ctx, false
+}
+
+// PermitDestAddrPatternRuleSet is an implementation of the RuleSet which
+// enables filtering supported destination address
+type PermitDestAddrPatternRuleSet struct {
+	AllowedFqdnPattern string
+}
+
+func (p *PermitDestAddrPatternRuleSet) Allow(ctx context.Context, req *Request) (context.Context, bool) {
+	match, _ := regexp.MatchString(p.AllowedFqdnPattern, req.DestAddr.FQDN)
+	return ctx, match
 }

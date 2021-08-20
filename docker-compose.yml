@@ -1,9 +1,11 @@
 version: '3'
 services:
-
   socks5:
-    restart: always
+    build: .
     image: serjs/go-socks5-proxy
-    env_file: .env
     ports:
-      - "1080:1080"
+      - '1080:1080'
+    command: |
+      --port 1080
+      --user someuser=somepass
+      --user someuser2=somepass2

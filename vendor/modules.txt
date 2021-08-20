@@ -1,9 +1,17 @@
+# github.com/akamensky/argparse v1.3.1
+## explicit
+github.com/akamensky/argparse
 # github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5
 ## explicit
 github.com/armon/go-socks5
 # github.com/caarlos0/env v3.3.1-0.20180521112546-3e0f30cbf50b+incompatible
 ## explicit
-github.com/caarlos0/env
+# github.com/sirupsen/logrus v1.8.1
+## explicit
+github.com/sirupsen/logrus
 # golang.org/x/net v0.0.0-20180406214816-61147c48b25b
 ## explicit
 golang.org/x/net/context
+# golang.org/x/sys v0.0.0-20191026070338-33540a1f6037
+golang.org/x/sys/unix
+golang.org/x/sys/windows

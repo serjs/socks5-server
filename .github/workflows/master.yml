@@ -55,4 +55,5 @@ jobs:
             --output "type=image,push=false" \
             --push \
             --tag "$DOCKERHUB_REPOSITORY:latest" \
-            Dockerfile.armv6
+            --file Dockerfile.armv6 \
+            .

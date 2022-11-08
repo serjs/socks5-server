@@ -45,4 +45,5 @@ jobs:
             --output "type=image,push=false" \
             --push \
             --tag "$DOCKERHUB_REPOSITORY:$RELEASE_VERSION" \
-            Dockerfile.armv6
+            --file Dockerfile.armv6
+            .

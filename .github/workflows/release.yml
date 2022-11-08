@@ -36,14 +36,3 @@ jobs:
             --push \
             --tag "$DOCKERHUB_REPOSITORY:$RELEASE_VERSION" \
             .
-      # Legacy build for armv6
-      -
-        name: Run Buildx for armv6 architecture
-        run: |
-          docker buildx build \
-            --platform linux/arm/v6 \
-            --output "type=image,push=false" \
-            --push \
-            --tag "$DOCKERHUB_REPOSITORY:$RELEASE_VERSION" \
-            --file Dockerfile.armv6
-            .

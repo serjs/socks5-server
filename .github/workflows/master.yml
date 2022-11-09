@@ -41,7 +41,7 @@ jobs:
         name: Run Buildx for amd64, armv7, arm64 architectures
         run: |
           docker buildx build \
-            --platform linux/arm,linux/amd64,linux/arm/v7,linux/arm64 \
+            --platform linux/amd64,linux/arm/v7,linux/arm64 \
             --output "type=image,push=false" \
             --push \
             --tag "$DOCKERHUB_REPOSITORY:latest" \

@@ -19,6 +19,9 @@ Leave `PROXY_USER` and `PROXY_PASSWORD` empty for skip authentication options wh
 |PROXY_PASSWORD|String|EMPTY|Set proxy password for auth, used with PROXY_USER|
 |PROXY_PORT|String|1080|Set listen port for application inside docker container|
 |TZ|String|UTC|Set Timezone like in many common Operation Systems|
+|ALLOWED_IPS|String|Empty|Set allowed IP's that can connect to proxy, separator `,`|
+
+`ALLOWED_IPS` parameter is not included in `serjs/go-socks5-proxy` image
 
 ## Test running service
 

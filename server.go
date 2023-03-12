@@ -10,10 +10,11 @@ import (
 )
 
 type params struct {
-	User       string   `env:"PROXY_USER" envDefault:""`
-	Password   string   `env:"PROXY_PASSWORD" envDefault:""`
-	Port       string   `env:"PROXY_PORT" envDefault:"1080"`
-	AllowedIPs []string `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
+	User            string    `env:"PROXY_USER" envDefault:""`
+	Password        string    `env:"PROXY_PASSWORD" envDefault:""`
+	Port            string    `env:"PROXY_PORT" envDefault:"1080"`
+	AllowedDestFqdn string    `env:"ALLOWED_DEST_FQDN" envDefault:""`
+	AllowedIPs      []string  `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
 }
 
 func main() {
@@ -25,7 +26,7 @@ func main() {
 	}
 
 	//Initialize socks5 config
-	socsk5conf := &socks5.Config{
+	socks5conf := &socks5.Config{
 		Logger: log.New(os.Stdout, "", log.LstdFlags),
 	}
 
@@ -34,10 +35,14 @@ func main() {
 			os.Getenv("PROXY_USER"): os.Getenv("PROXY_PASSWORD"),
 		}
 		cator := socks5.UserPassAuthenticator{Credentials: creds}
-		socsk5conf.AuthMethods = []socks5.Authenticator{cator}
+		socks5conf.AuthMethods = []socks5.Authenticator{cator}
 	}
 
-	server, err := socks5.New(socsk5conf)
+	if cfg.AllowedDestFqdn != "" {
+		socks5conf.Rules = PermitDestAddrPattern(cfg.AllowedDestFqdn)
+	}
+
+	server, err := socks5.New(socks5conf)
 	if err != nil {
 		log.Fatal(err)
 	}

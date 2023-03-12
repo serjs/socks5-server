@@ -2,17 +2,19 @@ package main
 
 import (
 	"log"
+	"net"
 	"os"
 
 	"github.com/armon/go-socks5"
-	"github.com/caarlos0/env"
+	"github.com/caarlos0/env/v6"
 )
 
 type params struct {
-	User            string `env:"PROXY_USER" envDefault:""`
-	Password        string `env:"PROXY_PASSWORD" envDefault:""`
-	Port            string `env:"PROXY_PORT" envDefault:"1080"`
-	AllowedDestFqdn string `env:"ALLOWED_DEST_FQDN" envDefault:""`
+	User            string    `env:"PROXY_USER" envDefault:""`
+	Password        string    `env:"PROXY_PASSWORD" envDefault:""`
+	Port            string    `env:"PROXY_PORT" envDefault:"1080"`
+	AllowedDestFqdn string    `env:"ALLOWED_DEST_FQDN" envDefault:""`
+	AllowedIPs      []string  `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
 }
 
 func main() {
@@ -43,6 +45,15 @@ func main() {
 	server, err := socks5.New(socks5conf)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	// Set IP whitelist
+	if len(cfg.AllowedIPs) > 0 {
+		whitelist := make([]net.IP, len(cfg.AllowedIPs))
+		for i, ip := range cfg.AllowedIPs {
+			whitelist[i] = net.ParseIP(ip)
+		}
+		server.SetIPWhitelist(whitelist)
 	}
 
 	log.Printf("Start listening proxy service on port %s\n", cfg.Port)

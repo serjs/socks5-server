@@ -26,6 +26,12 @@ Leave `PROXY_USER` and `PROXY_PASSWORD` empty for skip authentication options wh
 |PROXY_PORT|String|1080|Set listen port for application inside docker container|
 |ALLOWED_DEST_FQDN|String|EMPTY|Allowed destination address regular expression pattern. Default allows all.|
 |TZ|String|UTC|Set Timezone like in many common Operation Systems|
+|ALLOWED_IPS|String|Empty|Set allowed IP's that can connect to proxy, separator `,`|
+
+`ALLOWED_IPS` parameter is not included in `serjs/go-socks5-proxy` image.\
+You can build your image with:
+`docker-compose -f docker-compose.build.yml up -d`\
+Just don't forget to set parameters in the `.env` file.
 
 ## Test running service
 

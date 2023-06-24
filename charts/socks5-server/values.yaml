@@ -3,7 +3,7 @@
 image:
   repository: "serjs/go-socks5-proxy"
   # Define this override v{{ .Chart.AppVersion }}, which is the default
-  tag: "v0.0.3"
+  # tag: "v0.0.3"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -30,6 +30,8 @@ shareProcessNamespace: false
 
 podSecurityContext:
   fsGroup: 65534
+  seccompProfile:
+    type: RuntimeDefault
 
 securityContext:
   runAsNonRoot: true

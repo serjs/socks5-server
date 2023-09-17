@@ -7,15 +7,21 @@ Simple socks5 server using go-socks5 with authentication, allowed ips list and d
 
 # Examples
 
-- Run docker container using default container port 1080 and expose it to world using host port 1080, with auth creds
-
-    ```docker run -d --name socks5 -p 1080:1080 -e PROXY_USER=<PROXY_USER> -e PROXY_PASSWORD=<PROXY_PASSWORD>  serjs/go-socks5-proxy```
-
-    - Leave `PROXY_USER` and `PROXY_PASSWORD` empty for skip authentication options while running socks5 server, see example below
-
-- Run docker container using specifit container port and expose it to host port 1090, without auth creds
-
-    ```docker run -d --name socks5 -p 1090:9090 -e PROXY_PORT=9090 serjs/go-socks5-proxy```
+ - Clone this repo
+```shell
+git clone https://github.com/STmihan/socks5-server.git
+cd socks5-server
+```
+ - Run docker compose
+```shell
+docker compose up -d
+```
+ - Test it
+```shell
+cmd # ony if you are using windows powershell
+curl --socks5 localhost:1080 -U someuser:somepass http://ifcfg.co
+```
+ - If you want to use it without authentication, just remove `PROXY_USER` and `PROXY_PASSWORD` from `.env` file and restart container
 
 # List of supported config parameters
 
@@ -24,6 +30,7 @@ Simple socks5 server using go-socks5 with authentication, allowed ips list and d
 |PROXY_USER|String|EMPTY|Set proxy user (also required existed PROXY_PASS)|
 |PROXY_PASSWORD|String|EMPTY|Set proxy password for auth, used with PROXY_USER|
 |PROXY_PORT|String|1080|Set listen port for application inside docker container|
+|PROXY_HEALTHCHECK_PORT|String|1081|Set listen port for healthcheck endpoint inside docker container|
 |ALLOWED_DEST_FQDN|String|EMPTY|Allowed destination address regular expression pattern. Default allows all.|
 |ALLOWED_IPS|String|Empty|Set allowed IP's that can connect to proxy, separator `,`|
 
@@ -55,5 +62,6 @@ or
 # Authors
 
 * **Sergey Bogayrets**
+* **Mikhail Dunaev** (fork)
 
 See also the list of [contributors](https://github.com/serjs/socks5-server/graphs/contributors) who participated in this project.

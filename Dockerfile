@@ -6,6 +6,8 @@ WORKDIR /go/src/github.com/serjs/socks5
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-s' -o ./socks5
 
-FROM gcr.io/distroless/static:nonroot
-COPY --from=builder /go/src/github.com/serjs/socks5/socks5 /
-ENTRYPOINT ["/socks5"]
+FROM curlimages/curl:8.3.0 as runner
+
+COPY --from=builder /go/src/github.com/serjs/socks5/socks5 /usr/local/bin/socks5
+
+ENTRYPOINT ["/usr/local/bin/socks5"]

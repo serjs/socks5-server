@@ -44,7 +44,7 @@ func main() {
 	}
 
 	go func() {
-		startHealthCheck(cfg.HealthCheckPort, cfg.Port)
+		startHealthCheck(cfg.HealthCheckPort, cfg.Port, cfg.User, cfg.Password)
 	}()
 
 	server, err := socks5.New(socks5conf)

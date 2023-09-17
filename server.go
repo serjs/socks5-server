@@ -15,6 +15,7 @@ type params struct {
 	Port            string    `env:"PROXY_PORT" envDefault:"1080"`
 	AllowedDestFqdn string    `env:"ALLOWED_DEST_FQDN" envDefault:""`
 	AllowedIPs      []string  `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
+	HealthCheckPort string    `env:"PROXY_HEALTHCHECK_PORT" envDefault:"1081"`
 }
 
 func main() {
@@ -41,6 +42,10 @@ func main() {
 	if cfg.AllowedDestFqdn != "" {
 		socks5conf.Rules = PermitDestAddrPattern(cfg.AllowedDestFqdn)
 	}
+
+	go func() {
+		startHealthCheck(cfg.HealthCheckPort, cfg.Port)
+	}()
 
 	server, err := socks5.New(socks5conf)
 	if err != nil {

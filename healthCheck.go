@@ -6,13 +6,13 @@ import (
 	"os/exec"
 )
 
-func startHealthCheck(healthCheckPort string, proxyPort string) {
+func startHealthCheck(healthCheckPort string, proxyPort string, user string, password string) {
 	log.Printf("Start listening healthcheck on port %s\n", healthCheckPort)
 	addr := ":" + healthCheckPort
 	err := http.ListenAndServe(addr, http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		var header int
 		var textResponse string
-		if healthCheck(proxyPort) {
+		if healthCheck(proxyPort, user, password) {
 			header = http.StatusOK
 			textResponse = "OK"
 		} else {
@@ -30,8 +30,13 @@ func startHealthCheck(healthCheckPort string, proxyPort string) {
 	}
 }
 
-func healthCheck(port string) bool {
-	curl := exec.Command("curl", "--socks5", "localhost:"+port, "https://ifcfg.co", "-m", "2")
+func healthCheck(port string, user string, password string) bool {
+	var curl *exec.Cmd
+	if user == "" || password == "" {
+		curl = exec.Command("curl", "--socks5", "localhost:"+port, "https://ifcfg.co", "-m", "2")
+	} else {
+		curl = exec.Command("curl", "--socks5", "localhost:"+port, "https://ifcfg.co", "-m", "2", "-u", user+":"+password)
+	}
 	err := curl.Run()
 	if err != nil {
 		log.Printf("Error while running curl: %v", err)

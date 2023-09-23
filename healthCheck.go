@@ -35,7 +35,7 @@ func healthCheck(port string, user string, password string) bool {
 	if user == "" || password == "" {
 		curl = exec.Command("curl", "--socks5", "localhost:"+port, "https://ifcfg.co", "-m", "2")
 	} else {
-		curl = exec.Command("curl", "--socks5", "localhost:"+port, "https://ifcfg.co", "-m", "2", "-u", user+":"+password)
+		curl = exec.Command("curl", "--socks5", user+":"+password+"@localhost:"+port, "https://ifcfg.co")
 	}
 	err := curl.Run()
 	if err != nil {

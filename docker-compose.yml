@@ -8,5 +8,5 @@ services:
       dockerfile: Dockerfile
     env_file: .env
     ports:
-      - "1080:1080"
-      - "1081:1081"
+      - "${PROXY_PORT}:${PROXY_PORT}"
+      - "${PROXY_HEALTHCHECK_PORT}:${PROXY_HEALTHCHECK_PORT}"

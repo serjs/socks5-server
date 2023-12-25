@@ -2,6 +2,7 @@ package socks5
 
 import (
 	"context"
+	"net"
 	"net/netip"
 )
 
@@ -14,10 +15,12 @@ type NameResolver interface {
 type DNSResolver struct{}
 
 func (d DNSResolver) Resolve(ctx context.Context, name string) (context.Context, netip.Addr, error) {
-	addr, err := netip.ParseAddr(name)
+	ipAddr, err := net.ResolveIPAddr("ip", name)
 
 	if err != nil {
 		return ctx, netip.Addr{}, err
 	}
+
+	addr := netip.MustParseAddr(ipAddr.String())
 	return ctx, addr, err
 }

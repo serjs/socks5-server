@@ -2,12 +2,12 @@ package socks5
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"log"
 	"net"
+	"net/netip"
 	"os"
-
-	"golang.org/x/net/context"
 )
 
 const (
@@ -40,7 +40,7 @@ type Config struct {
 	Rewriter AddressRewriter
 
 	// BindIP is used for bind or udp associate
-	BindIP net.IP
+	BindIP netip.Addr
 
 	// Logger can be used to provide a custom log target.
 	// Defaults to stdout.
@@ -53,9 +53,10 @@ type Config struct {
 // Server is reponsible for accepting connections and handling
 // the details of the SOCKS5 protocol
 type Server struct {
-	config      *Config
-	authMethods map[uint8]Authenticator
-	isIPAllowed func(net.IP) bool
+	config       *Config
+	authMethods  map[uint8]Authenticator
+	isIPAllowed  func(netip.Addr) bool
+	isNetAllowed func(netip.Addr) bool
 }
 
 // New creates a new Server and potentially returns an error
@@ -95,7 +96,7 @@ func New(conf *Config) (*Server, error) {
 	}
 
 	// Set default IP whitelist function
-	server.isIPAllowed = func(ip net.IP) bool {
+	server.isIPAllowed = func(ip netip.Addr) bool {
 		return true // default allow all IPs
 	}
 
@@ -120,14 +121,18 @@ func (s *Server) Serve(l net.Listener) error {
 		}
 		go s.ServeConn(conn)
 	}
-	return nil
 }
 
 // SetIPWhitelist sets the function to check if a given IP is allowed
-func (s *Server) SetIPWhitelist(allowedIPs []net.IP) {
-	s.isIPAllowed = func(ip net.IP) bool {
+func (s *Server) SetIPWhitelist(allowedIPs []netip.Addr, allowedNets []netip.Prefix) {
+	s.isIPAllowed = func(ip netip.Addr) bool {
 		for _, allowedIP := range allowedIPs {
-			if ip.Equal(allowedIP) {
+			if ip.Compare(allowedIP) == 0 {
+				return true
+			}
+		}
+		for _, allowedNet := range allowedNets {
+			if allowedNet.Contains(ip) {
 				return true
 			}
 		}
@@ -146,7 +151,7 @@ func (s *Server) ServeConn(conn net.Conn) error {
 		s.config.Logger.Printf("[ERR] socks: Failed to get client IP address: %v", err)
 		return err
 	}
-	ip := net.ParseIP(clientIP)
+	ip, _ := netip.ParseAddr(string(clientIP))
 	if s.isIPAllowed(ip) {
 		s.config.Logger.Printf("[INFO] socks: Connection from allowed IP address: %s", clientIP)
 	} else {
@@ -163,7 +168,7 @@ func (s *Server) ServeConn(conn net.Conn) error {
 
 	// Ensure we are compatible
 	if version[0] != socks5Version {
-		err := fmt.Errorf("Unsupported SOCKS version: %v", version)
+		err := fmt.Errorf("unsupported SOCKS version: %v", version)
 		s.config.Logger.Printf("[ERR] socks: %v", err)
 		return err
 	}
@@ -171,7 +176,7 @@ func (s *Server) ServeConn(conn net.Conn) error {
 	// Authenticate the connection
 	authContext, err := s.authenticate(conn, bufConn)
 	if err != nil {
-		err = fmt.Errorf("Failed to authenticate: %v", err)
+		err = fmt.Errorf("failed to authenticate: %v", err)
 		s.config.Logger.Printf("[ERR] socks: %v", err)
 		return err
 	}
@@ -180,19 +185,20 @@ func (s *Server) ServeConn(conn net.Conn) error {
 	if err != nil {
 		if err == unrecognizedAddrType {
 			if err := sendReply(conn, addrTypeNotSupported, nil); err != nil {
-				return fmt.Errorf("Failed to send reply: %v", err)
+				return fmt.Errorf("failed to send reply: %v", err)
 			}
 		}
-		return fmt.Errorf("Failed to read destination address: %v", err)
+		return fmt.Errorf("failed to read destination address: %v", err)
 	}
 	request.AuthContext = authContext
 	if client, ok := conn.RemoteAddr().(*net.TCPAddr); ok {
-		request.RemoteAddr = &AddrSpec{IP: client.IP, Port: client.Port}
+		addr, _ := netip.ParseAddr(string(client.IP))
+		request.RemoteAddr = &AddrSpec{IP: addr, Port: client.Port}
 	}
 
 	// Process the client request
 	if err := s.handleRequest(request, conn); err != nil {
-		err = fmt.Errorf("Failed to handle request: %v", err)
+		err = fmt.Errorf("failed to handle request: %v", err)
 		s.config.Logger.Printf("[ERR] socks: %v", err)
 		return err
 	}

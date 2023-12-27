@@ -19,6 +19,13 @@ type PermitDestAddrPatternRuleSet struct {
 }
 
 func (p *PermitDestAddrPatternRuleSet) Allow(ctx context.Context, req *socks5.Request) (context.Context, bool) {
-	match, _ := regexp.MatchString(p.AllowedFqdnPattern, req.DestAddr.FQDN)
-	return ctx, match
+    var match bool
+    if req.DestAddr.FQDN != "" {
+        match, _ = regexp.MatchString(p.AllowedFqdnPattern, req.DestAddr.FQDN)
+    } else if req.DestAddr.IP != nil {
+        match, _ = regexp.MatchString(p.AllowedFqdnPattern, req.DestAddr.IP.String())
+    } else {
+	match = true
+    }
+    return ctx, match
 }

@@ -7,8 +7,8 @@ import (
 )
 
 type credentials struct {
-	username string `json:"username"`
-	password string `json:"password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 func parseCredentials(credsString string) (socks5.StaticCredentials, error) {
@@ -20,7 +20,7 @@ func parseCredentials(credsString string) (socks5.StaticCredentials, error) {
 
 	var credsMap socks5.StaticCredentials
 	for _, cred := range creds {
-		credsMap[cred.username] = cred.password
+		credsMap[cred.Username] = cred.Password
 	}
 
 	return credsMap, nil

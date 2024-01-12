@@ -10,11 +10,12 @@ import (
 )
 
 type params struct {
-	User            string    `env:"PROXY_USER" envDefault:""`
-	Password        string    `env:"PROXY_PASSWORD" envDefault:""`
-	Port            string    `env:"PROXY_PORT" envDefault:"1080"`
-	AllowedDestFqdn string    `env:"ALLOWED_DEST_FQDN" envDefault:""`
-	AllowedIPs      []string  `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
+	Creds           string   `env:"PROXY_CREDENTIALS" envDefault:""`
+	User            string   `env:"PROXY_USER" envDefault:""`
+	Password        string   `env:"PROXY_PASSWORD" envDefault:""`
+	Port            string   `env:"PROXY_PORT" envDefault:"1080"`
+	AllowedDestFqdn string   `env:"ALLOWED_DEST_FQDN" envDefault:""`
+	AllowedIPs      []string `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
 }
 
 func main() {
@@ -30,10 +31,17 @@ func main() {
 		Logger: log.New(os.Stdout, "", log.LstdFlags),
 	}
 
-	if cfg.User+cfg.Password != "" {
-		creds := socks5.StaticCredentials{
-			os.Getenv("PROXY_USER"): os.Getenv("PROXY_PASSWORD"),
+	var creds socks5.StaticCredentials
+	if cfg.Creds != "" {
+		creds, err = parseCredentials(cfg.Creds)
+		if err != nil {
+			log.Printf("%+v\n", err)
 		}
+	}
+	if cfg.User+cfg.Password != "" {
+		creds[cfg.User] = cfg.Password
+	}
+	if len(creds) > 0 {
 		cator := socks5.UserPassAuthenticator{Credentials: creds}
 		socks5conf.AuthMethods = []socks5.Authenticator{cator}
 	}

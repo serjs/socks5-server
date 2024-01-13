@@ -31,11 +31,18 @@ func main() {
 		Logger: log.New(os.Stdout, "", log.LstdFlags),
 	}
 
+	log.Printf(cfg.Creds)
+
 	var creds socks5.StaticCredentials
 	if cfg.Creds != "" {
-		creds, err = parseCredentials(cfg.Creds)
-		if err != nil {
+		var uname_pw_pairs, creds_err = parseCredentials(cfg.Creds)
+
+		if creds_err != nil {
 			log.Printf("%+v\n", err)
+		}
+
+		for _, kv := range uname_pw_pairs {
+			creds[kv.Username] = kv.Password
 		}
 	}
 	if cfg.User+cfg.Password != "" {

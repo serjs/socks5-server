@@ -34,20 +34,8 @@ func main() {
 	log.Printf(cfg.Creds)
 
 	var creds socks5.StaticCredentials
-	if cfg.Creds != "" {
-		var uname_pw_pairs, creds_err = parseCredentials(cfg.Creds)
+	creds, err = getCredentials(cfg)
 
-		if creds_err != nil {
-			log.Printf("%+v\n", err)
-		}
-
-		for _, kv := range uname_pw_pairs {
-			creds[kv.Username] = kv.Password
-		}
-	}
-	if cfg.User+cfg.Password != "" {
-		creds[cfg.User] = cfg.Password
-	}
 	if len(creds) > 0 {
 		cator := socks5.UserPassAuthenticator{Credentials: creds}
 		socks5conf.AuthMethods = []socks5.Authenticator{cator}

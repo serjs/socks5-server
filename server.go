@@ -33,8 +33,7 @@ func main() {
 
 	log.Printf(cfg.Creds)
 
-	var creds socks5.StaticCredentials
-	creds, err = getCredentials(cfg)
+	creds, err := getCredentials(cfg)
 
 	if len(creds) > 0 {
 		cator := socks5.UserPassAuthenticator{Credentials: creds}

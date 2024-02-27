@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "socks5-server.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "socks5-server.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "socks5-server.selectorLabels" . | nindent 4 }}
+  ports:
+    - name: socks5
+      port: {{ .Values.service.port }}
+      targetPort: socks5
+      protocol: TCP

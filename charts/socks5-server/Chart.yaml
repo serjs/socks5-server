@@ -1,0 +1,18 @@
+apiVersion: v2
+name: socks5-server
+description: Socks5-server is a simple socks5 server using go-socks5 with authentication, allowed ips list and destination FQDNs filtering.
+type: application
+version: 1.0.0
+appVersion: 0.0.3
+keywords:
+  - kubernetes
+  - socks5
+  - socks5-server
+  - service
+  - proxy
+home: https://github.com/serjs/socks5-server
+sources:
+  - https://github.com/serjs/socks5-server
+maintainers:
+  - name: joaoss35
+    email: joaopachecos@hotmail.com

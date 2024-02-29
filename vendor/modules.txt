@@ -2,8 +2,8 @@
 ## explicit
 github.com/armon/go-socks5
 # github.com/caarlos0/env/v6 v6.10.1
-## explicit; go 1.17
+## explicit; go 1.22
 github.com/caarlos0/env/v6
-# golang.org/x/net v0.1.0
-## explicit; go 1.17
+# golang.org/x/net v0.17.0
+## explicit; go 1.22
 golang.org/x/net/context

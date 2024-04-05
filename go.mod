@@ -7,4 +7,4 @@ require (
 	github.com/caarlos0/env/v6 v6.10.1
 )
 
-require golang.org/x/net v0.17.0
+require golang.org/x/net v0.24.0

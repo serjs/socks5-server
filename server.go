@@ -10,12 +10,13 @@ import (
 )
 
 type params struct {
-	User            string    `env:"PROXY_USER" envDefault:""`
-	Password        string    `env:"PROXY_PASSWORD" envDefault:""`
-	Port            string    `env:"PROXY_PORT" envDefault:"1080"`
-	AllowedDestFqdn string    `env:"ALLOWED_DEST_FQDN" envDefault:""`
-	AllowedIPs      []string  `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
-	HealthCheckPort string    `env:"PROXY_HEALTHCHECK_PORT" envDefault:"1081"`
+	User            string   `env:"PROXY_USER" envDefault:""`
+	Password        string   `env:"PROXY_PASSWORD" envDefault:""`
+	Port            string   `env:"PROXY_PORT" envDefault:"1080"`
+	AllowedDestFqdn string   `env:"ALLOWED_DEST_FQDN" envDefault:""`
+	AllowedIPs      []string `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
+	AllowedOrigins  []string `env:"ALLOWED_ORIGINS" envSeparator:"," envDefault:"*"`
+	HealthCheckPort string   `env:"PROXY_HEALTHCHECK_PORT" envDefault:"1081"`
 }
 
 func main() {
@@ -44,7 +45,7 @@ func main() {
 	}
 
 	go func() {
-		startHealthCheck(cfg.HealthCheckPort, cfg.Port, cfg.User, cfg.Password)
+		startHealthCheck(cfg.HealthCheckPort, cfg.Port, cfg.User, cfg.Password, cfg.AllowedOrigins)
 	}()
 
 	server, err := socks5.New(socks5conf)

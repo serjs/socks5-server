@@ -6,10 +6,10 @@ import (
 	"os/exec"
 )
 
-func startHealthCheck(healthCheckPort string, proxyPort string, user string, password string) {
+func startHealthCheck(healthCheckPort string, proxyPort string, user string, password string, allowedOrigins []string) {
 	log.Printf("Start listening healthcheck on port %s\n", healthCheckPort)
 	addr := ":" + healthCheckPort
-	err := http.ListenAndServe(addr, http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+	handler := http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		var header int
 		var textResponse string
 		if healthCheck(proxyPort, user, password) {
@@ -24,7 +24,11 @@ func startHealthCheck(healthCheckPort string, proxyPort string, user string, pas
 		if err != nil {
 			log.Printf("Error while writing healthcheck response: %v", err)
 		}
-	}))
+	})
+
+	corsHandler := corsMiddleware(handler, allowedOrigins)
+
+	err := http.ListenAndServe(addr, corsHandler)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,4 +48,30 @@ func healthCheck(port string, user string, password string) bool {
 	} else {
 		return true
 	}
+}
+
+func corsMiddleware(next http.Handler, allowedOrigins []string) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        // Allow origins from the allowedOrigins list
+        origin := r.Header.Get("Origin")
+        if contains(allowedOrigins, origin) {
+            w.Header().Set("Access-Control-Allow-Origin", origin)
+            w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+            if r.Method == "OPTIONS" {
+                w.WriteHeader(http.StatusOK)
+                return
+            }
+        }
+        next.ServeHTTP(w, r)
+    })
+}
+
+func contains(slice []string, item string) bool {
+    for _, s := range slice {
+        if s == item {
+            return true
+        }
+    }
+    return false
 }

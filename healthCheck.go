@@ -51,27 +51,29 @@ func healthCheck(port string, user string, password string) bool {
 }
 
 func corsMiddleware(next http.Handler, allowedOrigins []string) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        // Allow origins from the allowedOrigins list
-        origin := r.Header.Get("Origin")
-        if contains(allowedOrigins, origin) {
-            w.Header().Set("Access-Control-Allow-Origin", origin)
-            w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-            w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
-            if r.Method == "OPTIONS" {
-                w.WriteHeader(http.StatusOK)
-                return
-            }
-        }
-        next.ServeHTTP(w, r)
-    })
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		origin := r.Header.Get("Origin")
+		if contains(allowedOrigins, origin) {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+		}
+		next.ServeHTTP(w, r)
+	})
 }
 
 func contains(slice []string, item string) bool {
-    for _, s := range slice {
-        if s == item {
-            return true
-        }
-    }
-    return false
+	for _, s := range slice {
+		if s == "*" {
+			return true
+		}
+		if s == item {
+			return true
+		}
+	}
+	return false
 }

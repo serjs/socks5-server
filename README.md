@@ -29,7 +29,7 @@ Simple socks5 server using go-socks5 with authentication, allowed ips list and d
 
 
 # Build your own image:
-`docker-compose -f docker-compose.build.yml up -d`\
+`docker-compose up --build -d`\
 Just don't forget to set parameters in the `.env` file.
 
 # Test running service

@@ -1,61 +1,40 @@
-name: "Latest tag from master branch"
-env:
-  DOCKERHUB_REPOSITORY: serjs/go-socks5-proxy
+name: Build and Push Docker Image
 
 on:
-  pull_request:
-    branches: master
   push:
-    branches: master
-  release:
-    types: [published, edited]
+    branches:
+      - main  # Runs when code is pushed to the main branch
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
 
 jobs:
-  hadolint:
-    name: hadolint
-    runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest  # Uses the latest Ubuntu runner
+
     steps:
-    - uses: actions/checkout@master
-    - name: hadolint
-      uses: hadolint/hadolint-action@v1.5.0
-      with:
-        ignore: DL3018
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Checkout
-        uses: actions/checkout@v1
-      -
-        name: Set up Docker Buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1.1.0
-      -
-        name: Print builder available platforms
-        run: echo ${{ steps.buildx.outputs.platforms }}
-      -
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: serjs/go-socks5-proxy
-          tags: |
-            type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{raw}}
-      -
-        name: Dockerhub login
-        uses: docker/login-action@v2
-        if: github.event_name != 'pull_request'
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Run Buildx for amd64, armv7, arm64 architectures
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          platforms: linux/amd64,linux/arm/v7,linux/arm64
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+      # ✅ Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # ✅ Step 2: Login to Docker Hub using secrets
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      # ✅ Step 3: Login to GitHub Container Registry (GHCR) using Personal Access Token
+      # Required for pushing to organization-owned namespace (zamibd)
+      - name: Login to GHCR
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      # ✅ Step 4: Build Docker image and tag for both Docker Hub and GHCR
+      - name: Build Docker image
+        run: |
+          docker build . --file Dockerfile \
+            --tag imzami/socks5:latest \
+            --tag ghcr.io/zamibd/socks5:latest
+
+      # ✅ Step 5: Push image to Docker Hub
+      - name: Push to Docker Hub
+        run: docker push imzami/socks5:latest
+
+      # ✅ Step 6: Push image to GitHub Container Registry (GHCR)
+      - name: Push to GHCR
+        run: docker push ghcr.io/zamibd/socks5:latest

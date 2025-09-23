@@ -8,3 +8,5 @@ require (
 )
 
 require golang.org/x/net v0.38.0
+
+replace github.com/armon/go-socks5 => github.com/serjs/go-socks5 v0.0.0-20250923183437-3920b97ee0d2

@@ -14,6 +14,7 @@ type params struct {
 	Port            string    `env:"PROXY_PORT" envDefault:"1080"`
 	AllowedDestFqdn string    `env:"ALLOWED_DEST_FQDN" envDefault:""`
 	AllowedIPs      []string  `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
+	ListenIP string `env:"PROXY_LISTEN_IP" envDefault:"0.0.0.0"`
 }
 
 func main() {
@@ -55,8 +56,14 @@ func main() {
 		server.SetIPWhitelist(whitelist)
 	}
 
-	log.Printf("Start listening proxy service on port %s\n", cfg.Port)
-	if err := server.ListenAndServe("tcp", ":"+cfg.Port); err != nil {
+	listenAddr := ":" + cfg.Port
+	if cfg.ListenIP != "" {
+		listenAddr = cfg.ListenIP + ":" + cfg.Port
+	}
+
+
+	log.Printf("Start listening proxy service on %s\n", listenAddr)
+	if err := server.ListenAndServe("tcp", listenAddr); err != nil {
 		log.Fatal(err)
 	}
 }

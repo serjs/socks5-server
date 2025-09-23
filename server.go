@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net"
 	"os"
 
 	"github.com/armon/go-socks5"
@@ -46,7 +45,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	{{/*
 	// Set IP whitelist
 	if len(cfg.AllowedIPs) > 0 {
 		whitelist := make([]net.IP, len(cfg.AllowedIPs))
@@ -55,6 +54,7 @@ func main() {
 		}
 		server.SetIPWhitelist(whitelist)
 	}
+	*/}}
 
 	log.Printf("Start listening proxy service on port %s\n", cfg.Port)
 	if err := server.ListenAndServe("tcp", ":"+cfg.Port); err != nil {

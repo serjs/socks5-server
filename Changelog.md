@@ -3,12 +3,21 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased - available on :latest tag for docker image]
 ### Changed
-- Migrate to distroless docker image from scratch
-- 
 ### Added
-- New ALLOWED_DEST_FQDN config env paramteter for filtering dest FQND based on regex patterns
-- New SetIPWhitelist config env paramteter for setting whitelist set of ip addresses which allowed to use proxy connection 
-- Dependabot version updates automation
+
+## [v0.0.4] - 2025-10-07
+
+**Important:** :warning: Starting with this release, the proxy requires authentication by default. The `REQUIRE_AUTH` parameter is now set to `true` by default. Please refer to the documentation for details on this change.
+
+### Changed
+- Migrated to a distroless Docker image from scratch.
+- Moved go-socks5 to a modified forked repository at https://github.com/serjs/go-socks5 as a dependency.
+
+### Added
+- Added `REQUIRE_AUTH` parameter with a default value of `true` to enforce authentication for the proxy.
+- Added `ALLOWED_DEST_FQDN` config environment parameter for filtering destination FQDNs based on regex patterns.
+- Added `SetIPWhitelist` config environment parameter for setting a whitelist of IP addresses allowed to use the proxy connection.
+- Implemented Dependabot version updates automation.
 
 ## [v0.0.3] - 2021-07-07
 ### Added

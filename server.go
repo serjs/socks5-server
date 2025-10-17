@@ -13,6 +13,7 @@ type params struct {
 	Password        string    `env:"PROXY_PASSWORD" envDefault:""`
 	Port            string    `env:"PROXY_PORT" envDefault:"1080"`
 	AllowedDestFqdn string    `env:"ALLOWED_DEST_FQDN" envDefault:""`
+	AllowedDestIP   []string  `env:"ALLOWED_DEST_IP" envSeparator:"," envDefault:""`
 	AllowedIPs      []string  `env:"ALLOWED_IPS" envSeparator:"," envDefault:""`
 	ListenIP 		string 	  `env:"PROXY_LISTEN_IP" envDefault:"0.0.0.0"`
 	RequireAuth		bool      `env:"REQUIRE_AUTH" envDefault:"true"`
@@ -44,8 +45,29 @@ func main() {
 		log.Println("Warning: Running the proxy server without authentication. This is NOT recommended for public servers.")
 	}
 
+	var rule socks5.RuleSet
 	if cfg.AllowedDestFqdn != "" {
-		socks5conf.Rules = PermitDestAddrPattern(cfg.AllowedDestFqdn)
+		fqdnRule, err := PermitDestAddrPatternCompiled(cfg.AllowedDestFqdn)
+		if err != nil {
+			log.Fatalf("Invalid ALLOWED_DEST_FQDN regex: %v\n", err)
+		}
+		rule = fqdnRule
+	}
+
+	if len(cfg.AllowedDestIP) > 0 {
+		ipRule, err := PermitDestAddrIP(cfg.AllowedDestIP)
+		if err != nil {
+			log.Fatalf("Invalid ALLOWED_DEST_IP list: %v\n", err)
+		}
+		if rule == nil {
+			rule = ipRule
+		} else {
+			rule = CombineRuleSets(rule, ipRule)
+		}
+	}
+
+	if rule != nil {
+		socks5conf.Rules = rule
 	}
 
 	server, err := socks5.New(socks5conf)

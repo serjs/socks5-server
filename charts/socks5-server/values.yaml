@@ -1,0 +1,79 @@
+# socks5-server values file YAML-formatted=
+
+image:
+  repository: "serjs/go-socks5-proxy"
+  # Define this override v{{ .Chart.AppVersion }}, which is the default
+  # tag: "v0.0.3"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+commonLabels: {}
+
+serviceAccount:
+  create: true
+  annotations: {}
+  labels: {}
+  # Defaults to the the fullname template if empty
+  name: ""
+
+deploymentAnnotations: {}
+
+podLabels: {}
+
+podAnnotations: {}
+
+shareProcessNamespace: false
+
+podSecurityContext:
+  fsGroup: 65534
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: ["ALL"]
+
+# Defaults to `ClusterFirst`
+dnsPolicy:
+
+priorityClassName: ""
+
+terminationGracePeriodSeconds:
+
+env:
+  # - name: PROXY_USER
+  #   value: "foo"
+  # - name: PROXY_PASSWORD
+  #   value: "bar"
+  # - name: PROXY_PORT
+  #   value: "1080"
+
+service:
+  port: 1080
+  annotations: {}
+
+extraVolumes: []
+
+extraVolumeMounts: []
+
+resources: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+topologySpreadConstraints: []
+
+extraArgs: []
+
+deploymentStrategy:
+  type: RollingUpdate

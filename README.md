@@ -4,6 +4,29 @@
 
 Simple socks5 server using go-socks5 with authentication, allowed ips list and destination FQDNs filtering
 
+## ℹ️ About this fork
+
+This is a **maintained fork** of the original [serjs/socks5-server](https://github.com/serjs/socks5-server) project with focus on **reliability and production readiness**. 
+
+### 🔧 Key improvements in this fork
+
+- ✅ **Graceful shutdown** — Properly handles `SIGTERM`/`SIGINT` signals for safe container termination
+- ✅ **Regex validation** — FQDN patterns are validated at startup (fail-fast on config errors)
+- ✅ **Enhanced logging** — Rejected connections are logged with details for easier troubleshooting
+- ✅ **Unit tests** — Comprehensive test suite covering:
+  - FQDN filtering logic with regex patterns
+  - IP address validation and parsing
+  - Connection limiting and semaphore behavior
+  - Configuration parsing from environment variables
+- ✅ **Bug fixes** — Semaphore leak prevention in error scenarios
+- ✅ **Performance** — Compiled regex patterns are cached for optimal performance
+
+### 📈 Test coverage
+
+- 17+ unit tests, 30+ subtests
+- All tests pass in < 1 second
+- Ready for CI/CD pipelines
+
 # Examples
 
 - Run docker container using default container port 1080 and expose it to world using host port 1080, with auth creds
@@ -28,8 +51,22 @@ Simple socks5 server using go-socks5 with authentication, allowed ips list and d
 |MAX_CONNECTIONS|Int|100|Maximum number of concurrent client connections. New connections are queued until slots free up.|
 |TIMEOUT|Int|300|Connection read/write timeout in seconds. Prevents stuck or idle connections from hanging forever.|
 
+### Configuration Examples
 
+**Restrict to specific domains:**
+```bash
+ALLOWED_DEST_FQDN='^.*\.(example\.com|internal\.local)$'
+```
 
+**Allow only specific IPs:**
+```bash
+ALLOWED_IPS=192.168.1.10,10.0.0.5
+```
+
+**Disable authentication (not recommended):**
+```bash
+REQUIRE_AUTH=false
+```
 
 # Build your own image:
 `docker-compose -f docker-compose.build.yml up -d`\
@@ -55,8 +92,22 @@ or
 
 ```docker run --rm curlimages/curl:7.65.3 -s --socks5 <PROXY_USER>:<PROXY_PASSWORD>@<docker host ip>:1080 https://ipinfo.io```
 
+# Running tests
+
+```bash
+# Run all unit tests
+go test -v ./...
+
+# Run with coverage
+go test -cover ./...
+
+# Run specific test
+go test -run TestPermitDestAddrPattern ./...
+```
+
 # Authors
 
-* **Sergey Bogayrets**
+* **Sergey Bogayrets** (original project)
+* Maintained fork with improvements
 
 See also the list of [contributors](https://github.com/serjs/socks5-server/graphs/contributors) who participated in this project.

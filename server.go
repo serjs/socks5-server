@@ -4,6 +4,8 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/armon/go-socks5"
@@ -128,7 +130,23 @@ func main() {
 	}
 
 	log.Printf("SOCKS5 proxy слушает на %s", listenAddr)
+
+	// Graceful shutdown обработка
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGTERM, syscall.SIGINT)
+
+	go func() {
+		<-sigChan
+		log.Println("Получен сигнал завершения, закрываем слушатель...")
+		limitedLn.Close()
+	}()
+
 	if err := server.Serve(limitedLn); err != nil {
-		log.Fatalf("Ошибка сервера: %v", err)
+		// Ошибка Serve может быть от Close() при graceful shutdown
+		if err == net.ErrClosed {
+			log.Println("Сервер корректно остановлен")
+		} else {
+			log.Fatalf("Ошибка сервера: %v", err)
+		}
 	}
 }

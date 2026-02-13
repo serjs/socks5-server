@@ -22,9 +22,37 @@ Simple socks5 server using go-socks5 with authentication, allowed ips list and d
 |PROXY_USER|String|EMPTY|Set proxy user (also required existed PROXY_PASS)|
 |PROXY_PASSWORD|String|EMPTY|Set proxy password for auth, used with PROXY_USER|
 |PROXY_PORT|String|1080|Set listen port for application inside docker container|
+|PROXY_LISTEN_IP|String|0.0.0.0|Set listen IP for application inside docker container|
 |ALLOWED_DEST_FQDN|String|EMPTY|Allowed destination address regular expression pattern. Default allows all.|
 |ALLOWED_IPS|String|Empty|Set allowed IP's that can connect to proxy, separator `,`|
 
+# Health Check
+
+The application includes built-in health check functionality via the `--healthcheck` flag. This performs a full SOCKS5 protocol handshake to verify the server is running and accepting connections.
+
+## Usage
+
+**Docker Compose:**
+```yaml
+services:
+  socks5-proxy:
+    image: serjs/go-socks5-proxy
+    healthcheck:
+      test: ["/app/socks5", "--healthcheck"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+```
+
+## How it works
+
+- Connects to the SOCKS5 port and performs protocol handshake
+- Automatically detects if authentication is required
+- Uses `PROXY_USER` and `PROXY_PASSWORD` environment variables for authentication
+- Returns exit code 0 (success) or 1 (failure)
+- Works with both authenticated (`REQUIRE_AUTH=true`) and non-authenticated modes
+- No additional ports or HTTP endpoints required
 
 # Build your own image:
 `docker-compose -f docker-compose.build.yml up -d`\

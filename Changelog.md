@@ -1,9 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## [Unreleased - available on :latest tag for docker image]
-### Changed
+## [Unreleased]
+
 ### Added
+- Added built-in health check functionality via `--healthcheck` flag for Docker and monitoring systems.
+- Health check performs full SOCKS5 handshake with automatic authentication support.
+- Health check supports both authenticated (`REQUIRE_AUTH=true`) and non-authenticated modes.
+
+### Changed
+- Health check now uses the same SOCKS5 port for verification instead of requiring a separate HTTP endpoint.
+- Code formatting improved with `gofmt`.
+
+### Technical Details
+- Health check establishes TCP connection to SOCKS5 port and performs protocol handshake.
+- Automatically detects server authentication requirements and authenticates using `PROXY_USER` and `PROXY_PASSWORD`.
+- Eliminates spurious error logs during health check operations.
+- Compatible with docker-compose healthcheck configuration.
 
 ## [v0.0.4] - 2025-10-07
 

@@ -3,7 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased - available on :latest tag for docker image]
 ### Changed
+- Added fail2ban-friendly authentication failure logging with source `remote_ip`,
+  `username`, auth `method`, and structured `reason` values.
 ### Added
+- Added a regression test that verifies invalid username/password attempts produce
+  the expected `auth_failed` log line fields.
 
 ## [v0.0.4] - 2025-10-07
 

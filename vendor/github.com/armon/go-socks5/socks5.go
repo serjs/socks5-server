@@ -153,7 +153,7 @@ func (s *Server) ServeConn(conn net.Conn) error {
 		s.config.Logger.Printf("[WARN] socks: Connection from not allowed IP address: %s", clientIP)
 		return fmt.Errorf("connection from not allowed IP address")
 	}
-	
+
 	// Read the version byte
 	version := []byte{0}
 	if _, err := bufConn.Read(version); err != nil {
@@ -171,6 +171,17 @@ func (s *Server) ServeConn(conn net.Conn) error {
 	// Authenticate the connection
 	authContext, err := s.authenticate(conn, bufConn)
 	if err != nil {
+		if authErr, ok := err.(*authFailureError); ok {
+			s.config.Logger.Printf(
+				"[WARN] socks: auth_failed remote_ip=%s remote_addr=%q username=%q method=%d reason=%s",
+				authErr.RemoteIP,
+				authErr.RemoteAddr,
+				authErr.Username,
+				authErr.Method,
+				authErr.Reason,
+			)
+			return err
+		}
 		err = fmt.Errorf("Failed to authenticate: %v", err)
 		s.config.Logger.Printf("[ERR] socks: %v", err)
 		return err

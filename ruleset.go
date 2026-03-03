@@ -10,10 +10,10 @@ import (
 
 // PermitDestAddrPattern returns a RuleSet which selectively allows addresses
 func PermitDestAddrPattern(pattern string) socks5.RuleSet {
-	// Валидируем regex при инициализации
+	// Validate regex at initialization
 	compiled, err := regexp.Compile(pattern)
 	if err != nil {
-		log.Fatalf("Некорректный regex паттерн в ALLOWED_DEST_FQDN: %v", err)
+		log.Fatalf("Invalid regex pattern in ALLOWED_DEST_FQDN: %v", err)
 	}
 	return &PermitDestAddrPatternRuleSet{
 		AllowedFqdnPattern: pattern,
@@ -25,13 +25,13 @@ func PermitDestAddrPattern(pattern string) socks5.RuleSet {
 // enables filtering supported destination address
 type PermitDestAddrPatternRuleSet struct {
 	AllowedFqdnPattern string
-	compiledRegex      *regexp.Regexp // Кэшируем откомпилированный regex для производительности
+	compiledRegex      *regexp.Regexp // Cache compiled regex for performance
 }
 
 func (p *PermitDestAddrPatternRuleSet) Allow(ctx context.Context, req *socks5.Request) (context.Context, bool) {
 	match := p.compiledRegex.MatchString(req.DestAddr.FQDN)
 	if !match {
-		log.Printf("[FQDN FILTER] Отклонено соединение к %s (не соответствует паттерну)", req.DestAddr.FQDN)
+		log.Printf("[FQDN FILTER] Rejected connection to %s (does not match pattern)", req.DestAddr.FQDN)
 	}
 	return ctx, match
 }
